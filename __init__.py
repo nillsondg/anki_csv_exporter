@@ -1,8 +1,3 @@
-# -*- coding: utf-8 -*-
-# Copyright: Chris <chris@cbxy.de>
-# License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
-
-
 from anki.exporting import Exporter
 from anki.hooks import addHook
 from anki.lang import _
@@ -11,8 +6,8 @@ import csv
 import codecs
 
 
-class CSVExporter(Exporter):
-    key = _("Notes in CSV format (;separated)")
+class CSVNoteExporter(Exporter):
+    key = _("Notes in CSV format")
     ext = ".csv"
     db_query = """
 select guid, flds, tags from notes
@@ -24,7 +19,7 @@ where cards.id in %s)
     def __init__(self, col):
         super().__init__(col)
         self.includeTags = True
-        #self.includeID = False
+        # self.includeID = False
 
     # Overwrite exportInto from Exporter to not open in BufferedIO Mode
     def exportInto(self, path):
@@ -41,7 +36,7 @@ where cards.id in %s)
         for _id, flds, tags in self.col.db.execute(self.db_query % ids2str(cardIds)):
             row = []
             # note id
-            #if self.includeID:
+            # if self.includeID:
             #    row.append(str(_id))
             # fields
             row.extend([self.escapeText(f) for f in splitFields(flds)])
@@ -53,7 +48,7 @@ where cards.id in %s)
 
 
 def update_exporters_list(exps):
-    exps.append(("Export decks in csv (; separated)", CSVExporter))
+    exps.append(("Notes in CSV format (*.csv)", CSVNoteExporter))
 
 
 addHook("exportersList", update_exporters_list)
